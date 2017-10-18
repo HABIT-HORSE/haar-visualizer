@@ -1,6 +1,17 @@
-/*var p5 = require('p5')
-	, dat = require('exdat')
-	, parseHaarCascade = require('./parseHaarCascade.js');
+
+
+/*
+Author:  Steve North
+Author URI: http://socialsciences.exeter.ac.uk/sociology/staff/north/ 
+License: AGPLv3 or later
+License URI: http://www.gnu.org/licenses/agpl-3.0.en.html
+Can: Commercial Use, Modify, Distribute, Place Warranty
+Can't: Sublicence, Hold Liable
+Must: Include Copyright, Include License, State Changes, Disclose Source
+This research was originally funded in the UK under EPSRC grant reference EP/I031839/1 and title 'Exploring the potential of networked urban screens for communities and culture'.
+
+Copyright (c) 2017, The University of Exeter
+
 */
 
 var images = {
@@ -27,75 +38,29 @@ var gui;
 var _data;
 
 
-
-
-
 function err() {
 	throw new Error('Error!', arguments);
 }
 
-//new p5(sketch);
-//sketch();
-//steveDraw();
+var raw_XML_from_text_file;
 
-//var img;
-var XML_detector;
+var parseXml;
 
-var xml;
+var cascade_as_XML_DOM_object;
 
+// Next bit happens first...
 
 window.onload = function() {
+	
+	
+// The event handlers for the two HTML file selectors (XML cascade and image)
 
-		var fileInput = document.getElementById('fileInput');
-		
-		var fileInput2 = document.getElementById('fileInput2');
-		
-		//var fileDisplayArea = document.getElementById('fileDisplayArea');
+	// XML cascade file picker
+	
+	var XML_cascade_HTML_file_picker = document.getElementById('XML_cascade_HTML_file_picker');
 
-
-		fileInput.addEventListener('change', function(e) {
-			var file = fileInput.files[0];
-			var imageType = /image.*/;
-
-			if (file.type.match(imageType)) {
-				
-				//console.log("Is an image!");
-				var reader = new FileReader();
-
-				reader.onload = function(e) {
-				//	fileDisplayArea.innerHTML = "";
-
-				imgA = reader.result;
-				//imgA.src = reader.result;
-				
-			
-					
-					//img.src = "data/female-averaged-cropped.jpg";
-					
-					
-					//img = reader.result;
-					//console.log(reader.result);
-					//console.log(imgA);
-					
-
-				//	fileDisplayArea.appendChild(img);
-				
-				//steveDraw();
-				new p5(sketch2);
-				}
-
-				reader.readAsDataURL(file);	
-			} else {
-				//fileDisplayArea.innerHTML = "File not supported!"
-				console.log("File not supported!");
-			}
-		});
-
-
-		
-		
-		fileInput2.addEventListener('change', function(e) {
-			var file = fileInput2.files[0];
+			XML_cascade_HTML_file_picker.addEventListener('change', function(e) {
+			var file = XML_cascade_HTML_file_picker.files[0];
 			var textType = /text.*/;
 
 			
@@ -104,55 +69,73 @@ window.onload = function() {
 				var reader = new FileReader();
 
 				reader.onload = function(e) {
-					//fileDisplayArea.innerText = reader.result;
-					XML_detector = reader.result;
-					//console.log(XML_detector);
+					raw_XML_from_text_file = reader.result;
+					//console.log(raw_XML_from_text_file);
 					
 				}
 
 				reader.readAsText(file);	
 			} else {
-				//fileDisplayArea.innerText = "File not supported!"
 				console.log("File not supported!");
 			}
-		});		
-		
-		
-		
-		
-}
+		});	
+	
+	
+	// image file picker ... after image is loaded... this triggers everything else with: new p5(sketch);
+	
+		var image_HTML_file_picker = document.getElementById('image_HTML_file_picker');
+	
+		image_HTML_file_picker.addEventListener('change', function(e) {
+			var file = image_HTML_file_picker.files[0];
+			var imageType = /image.*/;
+
+			if (file.type.match(imageType)) {
+				
+				//console.log("Is an image!");
+				var reader = new FileReader();
+
+				reader.onload = function(e) {
+
+				imgA = reader.result;
+
+	// ###########################################
+            	new p5(sketch); // Look here!! This is where the graphics get called and everything starts!!
+
+				}
+
+				reader.readAsDataURL(file);	
+			} else {
+				console.log("File not supported!");
+			}
+		});
 
 
-var sketch2 = function(p) {
+	
+		
+	
+		
+				
+		
+} // close Window onLoad
 
 
+// Now... the main bit!!
+
+var sketch = function(p) {
 
 	p.setup = function() {
 		
 		img = p.createImg(imgA).hide();
 		
 		canvas = p.createCanvas(600, 600);
-
-		//p.loadXML('data/haarcascade_frontalface_default.xml', xmlLoaded);
-		//p.loadXML('data/haarcascade_frontalface_default.xml');
-		//p.loadXML('F:\Google Drive 2\dev\GitHub\haar-visualizer\data\haarcascade_frontalface_default.xml');
-		
-		
-		//p.loadXML(XML_detector);
-		
-		xml = parseXml(XML_detector);
+				
+		cascade_as_XML_DOM_object = parseXml(raw_XML_from_text_file);
 		
 		gui = new dat.GUI();
 		
-		xmlLoaded(xml);
+		xmlLoaded(cascade_as_XML_DOM_object);
 		
-		//alert(xml.documentElement.nodeName);
-		
-		//gui.add(params, 'currentImage', images).onChange(function(path) {
-		//	img = p.loadImage(path)
-		//});
-		
-		gui.add(params, 'currentImage', images).onChange(function(path) {img});
+		//gui.add(params, 'currentImage', images).onChange(function(path) {img});   // Took this out, because images are loaded differently
 		gui.add(params, 'showImage');
 		gui.add(params, 'showGrid');
 		gui.add(params, 'overlayStageFeatures');
@@ -174,8 +157,7 @@ var sketch2 = function(p) {
 				drawGrid(_data.sampleSize[0], _data.sampleSize[1]);
 			}
 
-			// var nodes = _data.flattened;
-			
+	
 			//console.log("# Stages = " + _data.stages.length);
 
 			if(params.overlayStageFeatures) {
@@ -193,7 +175,7 @@ var sketch2 = function(p) {
 			}
 		}
 
-		p.keyTyped = function() {
+		p.keyTyped = function() { // From fork: attempt to get rects animating on key presses
 			// if(p.key === '.') {
  		// 		params.currentNode++;
 			// }
@@ -204,9 +186,6 @@ var sketch2 = function(p) {
 		}
 
 	}
-
-
-
 
 
 function drawTreesInStage(stage, min, max) {
@@ -229,22 +208,11 @@ function drawTreesInStage(stage, min, max) {
 	}
 
 
-	function xmlLoaded(data) {
+function xmlLoaded(data) {
 		
 		//console.log(data);
 		
 		_data = parseHaarCascade(data);
-		// _data.flattened = [];
-
-		
-		// _data.stages.forEach(function(trees) {
-		// 	trees.forEach(function(nodes, j) {
-		// 		nodes.forEach(function(node, k) {
-		// 			_data.flattened.push(node);
-		// 		});
-		// 	});
-		// });
-
 
 		var stageController = gui.add(params, 'currentStage', 0, _data.stages.length-1);
 		var treeController = gui.add(params, 'currentTree', 0, _data.stages[params.currentStage].length-1);
@@ -260,7 +228,8 @@ function drawTreesInStage(stage, min, max) {
 		//console.log('xmlLoaded', _data);
 	}
 
-	function drawGrid(w, h, lineColor) {
+
+function drawGrid(w, h, lineColor) {
 		var i, j;
 		var horizSpace = p.floor(p.width/w);
 		var vertSpace = p.floor(p.height/h);
@@ -282,7 +251,7 @@ function drawTreesInStage(stage, min, max) {
 	}
 
 
-	function drawHaarRects(node, sampleSize) {
+function drawHaarRects(node, sampleSize) {
 		
 		//console.log("draw haar rect");
 
@@ -319,11 +288,9 @@ function drawTreesInStage(stage, min, max) {
 	}
 
 	
-}
+} // close Sketch function....
 
 
-
-var parseXml;
 
 if (typeof window.DOMParser != "undefined") {
     parseXml = function(xmlStr) {
@@ -341,8 +308,9 @@ if (typeof window.DOMParser != "undefined") {
     throw new Error("No XML parser found");
 }
 
-//var xml = parseXml("<foo>Stuff</foo>");
-//alert(xml.documentElement.nodeName);
+
+
+// Helper functions and stuff...
 
    function xmlToString(xmlData) { 
 
