@@ -23,6 +23,9 @@ Also, I am not convinced that this version demonstrates the detector being appli
 
 Inmportant: you have to move the sliders on the control panel (currentStage and currentTree) to actually see anything overlaid on the image!!
 
+Note: the 3rd party detectors in the human detectors directory have all had their root node edited (NOT BY ME...by original author) from <cascade></cascade> to (for example) <haarcascade_frontalface_tree_alt type_id="opencv-haar-classifier"></haarcascade_frontalface_tree_alt type_id="opencv-haar-classifier">.
+Therefore, they are no longer compatible with the XML format. I fixed this in the two detectors in the root of this project and they are using <cascade> again. So, if you want to use any of the other other human detectors, the root nodes will need editing.
+
 TO DO:
 
 1. Add animation, with variable speed (maybe progressing through each stage and feature / tree and then looping?).
