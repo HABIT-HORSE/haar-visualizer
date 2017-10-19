@@ -1,12 +1,19 @@
 
 habit_haar_visualiser
 ================
+
 Author:  Steve North
+
 Author URI:  http://socialsciences.exeter.ac.uk/sociology/staff/north/
+
 License: AGPLv3 or later
+
 License URI: http://www.gnu.org/licenses/agpl-3.0.en.html
+
 Can: Commercial Use, Modify, Distribute, Place Warranty
+
 Can't: Sublicence, Hold Liable
+
 Must: Include Copyright, Include License, State Changes, Disclose Source
 
 Copyright (c) 2017, The University of Exeter
@@ -18,9 +25,10 @@ Inmportant: you have to move the sliders on the control panel (currentStage and 
 
 TO DO:
 
-Add animation, with variable speed (maybe progressing through each stage and feature / tree and then looping?).
-Add output images for each rect that is added... or a video clip.
-
+1. Add animation, with variable speed (maybe progressing through each stage and feature / tree and then looping?).
+2. Add output images for each rect that is added... or a video clip.
+3. Rewrite the XML parser, so that it works with the later OpenCV haar cascade format.
+4. Add actual detection, rather than just running through the stages and features, without looking at the image. It should visually indicate when the test image has made it all the way though the detector stages, or it should stop if the image fails. Note: would need access to OpenCV from JavaScript. Have a look at this: https://github.com/foo123/HAAR.js
 
 This is heavily based on 'Haar-Visualizer' (https://github.com/andyinabox/haar-visualizer) by andyinabox and (in turn) Adam Harvey's research for [CV Dazzle](https://cvdazzle.com/), especially his [Processing code for visualizing Haar cascades used in the Viola Jones algorithm](https://github.com/adamhrv/HaarcascadeVisualizer).
 
